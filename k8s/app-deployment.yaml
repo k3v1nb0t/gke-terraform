@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: REGISTRY_HOSTNAME/IMAGE:GITHUB_SHA
+        image: REGISTRY_HOSTNAME/PROJECT_ID/IMAGE:GITHUB_SHA
         ports:
         - containerPort: 80
         env:

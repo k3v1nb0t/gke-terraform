@@ -65,18 +65,12 @@ jobs:
           docker push $REGISTRY_HOSTNAME/$GKE_PROJECT/$IMAGE:$GITHUB_SHA
         working-directory: ${{ env.server }}
 
-      # Set up kustomize
-      - name: Set up Kustomize
-        run: |
-          curl -o kustomize --location https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
-          chmod u+x ./kustomize
-        working-directory: ${{ env.server }}
-
       # Deploy the Docker image to the GKE cluster
       - name: Deploy
         run: |
           gcloud container clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $GKE_PROJECT
           sed -i -e 's/REGISTRY_HOSTNAME/'"$REGISTRY_HOSTNAME"'/' ./k8s/app-deployment.yaml
+          sed -i -e 's/PROJECT_ID/'"$GKE_PROJECT"'/' ./k8s/app-deployment.yaml
           sed -i -e 's/IMAGE/'"$IMAGE"'/' ./k8s/app-deployment.yaml
           sed -i -e 's/GITHUB_SHA/'"$GITHUB_SHA"'/' ./k8s/app-deployment.yaml
           kubectl apply -f ./k8s/app-deployment.yaml
